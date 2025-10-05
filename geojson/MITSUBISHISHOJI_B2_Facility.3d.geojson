@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [139.76214133004115, 35.6809301091897, -21.8]}, "properties": {"id": "8eff0dc8c8db4e5399a814fa696c5a49", "category": "F012", "floor_id": "b2f44dc5fcbb401885d5139b71eed0e7", "name": null, "source": "1", "__floor": "B2", "__z_abs": -21.8}}]}

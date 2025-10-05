@@ -1,0 +1,233 @@
+<html>
+  <head>
+    <title>東京駅周辺屋内3Dマップ</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
+    <link
+      href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/pmtiles@3.2.0/dist/pmtiles.js"></script>
+    <script src="https://unpkg.com/deck.gl@8.9.0/dist.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #000;
+      }
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script type="text/javascript">
+      const protocol = new pmtiles.Protocol();
+      maplibregl.addProtocol("pmtiles", protocol.tile);
+
+      const map = new maplibregl.Map({
+        container: "map",
+        style: { version: 8, sources: {}, layers: [] },
+        zoom: 16.77,
+        minZoom: 4,
+        maxZoom: 23,
+        center: [139.700245, 35.692105],
+        hash: true,
+        bearing: 137.6,
+        pitch: 61,
+        maxPitch: 85,
+        attributionControl: false,
+      });
+
+      map.addControl(new maplibregl.NavigationControl());
+      map.addControl(new maplibregl.FullscreenControl());
+      map.addControl(
+        new maplibregl.GeolocateControl({
+          positionOptions: { enableHighAccuracy: false },
+          fitBoundsOptions: { maxZoom: 18 },
+          trackUserLocation: true,
+          showUserLocation: true,
+        })
+      );
+      map.addControl(
+        new maplibregl.ScaleControl({ maxWidth: 200, unit: "metric" })
+      );
+      map.addControl(
+        new maplibregl.AttributionControl({
+          compact: true,
+          customAttribution:
+            '<a href="https://twitter.com/shi__works" target="_blank">X(旧Twitter)</a> | <a href="https://github.com/shiwaku/mlit-tokyo-indoor-3dmap-on-maplibre" target="_blank">GitHub</a> | <a href="https://www.geospatial.jp/ckan/dataset/mlit-indoor-tokyo-r2" target="_blank">「東京駅周辺屋内地図データ」（国土交通省）（https://www.geospatial.jp/ckan/dataset/mlit-indoor-tokyo-r2）を加工して作成</a>　| <a href="https://catalog.data.metro.tokyo.lg.jp/dataset/t000008d2000000019/resource/da90f643-4925-4921-8d83-77809cebe80a" target="_blank">土地利用現況調査令和３年区部（シェープファイル）を加工して作成</a>',
+        })
+      );
+
+      map.on("load", () => {
+        // ▼▼▼ 追加: フロア別色 & レイヤ生成（polygons / lines / points） ▼▼▼
+        const FLOORS = [
+          "B3",
+          "B2",
+          "B1",
+          "0F",
+          "1F",
+          "2F",
+          "2out",
+          "3F",
+          "3out",
+          "4F",
+          "4out",
+        ];
+
+        const FLOOR_COLORS = {
+          B3: [255, 0, 255, 230],
+          B2: [127, 0, 255, 230],
+          B1: [0, 0, 255, 230],
+          "0F": [255, 255, 255, 150],
+          "1F": [0, 255, 0, 160],
+          "2F": [255, 255, 0, 170],
+          "2out": [255, 255, 0, 170],
+          "3F": [255, 127, 0, 170],
+          "3out": [255, 127, 0, 170],
+          "4F": [255, 0, 0, 170],
+          "4out": [255, 0, 0, 170],
+        };
+
+        const isUnderground = (floor) => floor.startsWith("B");
+        const GLOW_PARAMS = {
+          parameters: { blendFunc: [770, 1], blendEquation: 32774 },
+        };
+
+        const MATERIAL_FLAT = {
+          ambient: 1.0,
+          diffuse: 0.0,
+          shininess: 0.0,
+          specularColor: [0, 0, 0],
+        };
+
+        function urlFor(floor, type) {
+          return `./geojson_merged/Tokyo_${floor}.${type}.geojson`;
+        }
+
+        function buildLayer(floor, type) {
+          const color = FLOOR_COLORS[floor] || [200, 200, 200, 160];
+          const id = `Tokyo_${floor}.${type}`;
+          const glow = isUnderground(floor);
+
+          if (type === "polygons") {
+            const fillAlpha = glow ? 50 : 30;
+            const fillColor = [color[0], color[1], color[2], fillAlpha];
+
+            return new deck.GeoJsonLayer({
+              id,
+              data: urlFor(floor, type),
+              extruded: true,
+              wireframe: true,
+              filled: true,
+              stroked: true,
+              lineWidthUnits: "meters",
+              getLineWidth: 0.8,
+              getLineColor: color,
+              getFillColor: fillColor,
+              getElevation: glow ? 5 : 5,
+              material: MATERIAL_FLAT,
+              pickable: true,
+              ...(glow ? GLOW_PARAMS : {}),
+            });
+          } /*else if (type === "lines") {
+            return new deck.GeoJsonLayer({
+              id,
+              data: urlFor(floor, type),
+              stroked: true,
+              filled: false,
+              lineWidthUnits: "meters",
+              getLineWidth: glow ? 0.5 : 0.35, // 地下は太め
+              getLineColor: color,
+              pickable: true,
+              ...(glow ? GLOW_PARAMS : {}),
+            });
+          } else {
+            // points
+            return new deck.GeoJsonLayer({
+              id,
+              data: urlFor(floor, type),
+              pointRadiusMinPixels: glow ? 3 : 2, // 地下はやや大きく
+              getFillColor: color,
+              pickable: true,
+              ...(glow ? GLOW_PARAMS : {}),
+            });
+          }*/
+        }
+
+        const EXTRA_LAYERS = [];
+        ["polygons", "lines", "points"].forEach((type) => {
+          FLOORS.forEach((floor) => {
+            EXTRA_LAYERS.push(buildLayer(floor, type));
+          });
+        });
+
+        const BLACK_TEXTURE =
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7u8gEAAAAASUVORK5CYII=";
+
+        const overlay = new deck.MapboxOverlay({
+          interleaved: true,
+          layers: [
+            new deck.GeoJsonLayer({
+              id: "r3_tokyo_tochiriyo",
+              data: "./r3_tokyo_tochiriyo.add.z.geojson",
+              extruded: false,
+              wireframe: true,
+              filled: false,
+              stroked: true,
+              lineWidthUnits: "meters",
+              getLineWidth: 0.3,
+              getLineColor: [255, 255, 255, 150],
+              getFillColor: [255, 255, 255, 25],
+              // material: MATERIAL_FLAT,
+              // pickable: true,
+            }),
+            new deck.GeoJsonLayer({
+              id: "tokyo_link_3d",
+              data: "./tokyo_link_3d.geojson",
+              stroked: true,
+              filled: false,
+              lineWidthUnits: "meters",
+              getLineWidth: 1, // 太さ調整（0.6〜1.4）
+              getLineColor: [0, 255, 255, 80], // 明るめシアン（透明度あり）
+              parameters: {
+                depthTest: false, // 常に前面表示
+              },
+              // 加算合成を有効化（deck.gl推奨の方法）
+              blending: "additive",
+              material: {
+                ambient: 1.0,
+                diffuse: 0.0,
+                shininess: 0.0,
+                specularColor: [0, 0, 0],
+              },
+            }),
+            new deck.TerrainLayer({
+              elevationData:
+                "https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png",
+              wireframe: false,
+              minZoom: 0,
+              maxZoom: 14,
+              elevationDecoder: {
+                rScaler: 6553.6,
+                gScaler: 25.6,
+                bScaler: 0.1,
+                offset: -10000,
+              },
+              bounds: [133.125, 34.5, 133.25, 34.4166667],
+              opacity: 0.0,
+              texture: [BLACK_TEXTURE],
+              parameters: { depthTest: false },
+            }),
+            ...EXTRA_LAYERS,
+          ],
+        });
+        map.addControl(overlay);
+      });
+    </script>
+  </body>
+</html>

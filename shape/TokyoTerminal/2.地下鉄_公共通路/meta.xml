@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<attribute>
+  <abstract>東京駅周辺屋内地図オープンデータ</abstract>
+  <author>国土交通省不動産・建設経済局情報活用推進課</author>
+  <description>東京メトロ 地図・POI最新化(対象データは次の名称から始まるファイル群：ChiyodaHibiya/ChiyodaNiju/ChiyodaOtemati/GinzaGinza/Hanzo/HibiyaGinza/HibiyaHibiya/MaruGinza/MaruOtemati/MaruTokyo/Tozai/Yurakucho)、東京メトロ地図との接続部分のみを修正した都営地下鉄地図(対象データは次の名称から始まるファイル群：HibiyaHigagin)、都営地下鉄 地図・POI最新化(対象データは次の名称から始まるファイル群：MitaHibiya)</description>
+  <project>高精度測位社会プロジェクト</project>
+  <facility>都営地下鉄、東京メトロ、行幸地下ギャラリー、その他地下歩行者専用道</facility>
+  <createdate>2020/8</createdate>
+  <source>
+    <name>駅構内案内図/周辺案内図/施設平面図(三田線日比谷駅)</name>
+    <author>不明</author>
+    <createdate>不明</createdate>
+    <dataformat>(駅構内案内図)画像(周辺案内図)画像(施設平面図)JWW</dataformat>
+    <scale>(駅構内案内図)不明(周辺案内図)不明(施設平面図)1/800</scale>
+  </source>
+  <editmethod>Esri ArcGIS Desktop 10.2.2により作成</editmethod>
+  <survey>有</survey>
+</attribute>

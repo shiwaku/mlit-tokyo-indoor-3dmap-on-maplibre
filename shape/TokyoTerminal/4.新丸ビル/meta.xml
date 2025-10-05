@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<attribute>
+  <abstract>東京駅周辺屋内地図オープンデータ</abstract>
+  <author>国土交通省不動産・建設経済局情報活用推進課</author>
+  <description>更新無(平成30年8月31日公開版「東京駅周辺屋内地図オープンデータ」と同内容)</description>
+  <project>高精度測位社会プロジェクト</project>
+  <facility>新丸の内ビルディング</facility>
+  <createdate>2018/8</createdate>
+  <source>
+    <name>フロアマップ</name>
+    <author>不明</author>
+    <createdate>2015/11</createdate>
+    <dataformat>画像</dataformat>
+    <scale>不明</scale>
+  </source>
+  <editmethod>Esri ArcGIS Desktop 10.2.2により作成</editmethod>
+  <survey>無</survey>
+</attribute>

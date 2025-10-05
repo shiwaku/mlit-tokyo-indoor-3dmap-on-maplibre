@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<attribute>
+  <abstract>東京駅周辺屋内地図オープンデータ</abstract>
+  <author>国土交通省不動産・建設経済局情報活用推進課</author>
+  <description>大手町駅との接続部分のみ地図修正</description>
+  <project>高精度測位社会プロジェクト</project>
+  <facility>丸の内オアゾ</facility>
+  <createdate>2020/8</createdate>
+  <source>
+    <name>フロアマップ/施設平面図(部分更新)</name>
+    <author>(フロアマップ)不明(施設平面図)不明</author>
+    <createdate>(フロアマップ)2015/11(施設平面図)2018/5</createdate>
+    <dataformat>(フロアマップ)画像(施設平面図)PDF</dataformat>
+    <scale>(フロアマップ)不明(施設平面図)1/200</scale>
+  </source>
+  <editmethod>Esri ArcGIS Desktop 10.2.2により作成</editmethod>
+  <survey>無</survey>
+</attribute>

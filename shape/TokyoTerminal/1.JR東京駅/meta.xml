@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<attribute>
+  <abstract>東京駅周辺屋内地図オープンデータ</abstract>
+  <author>国土交通省不動産・建設経済局情報活用推進課</author>
+  <description>地図・POI最新化</description>
+  <project>高精度測位社会プロジェクト</project>
+  <facility>JR東京駅</facility>
+  <createdate>2020/8</createdate>
+  <source>
+    <name>駅構内図</name>
+    <author>JR東日本コンサルタンツ株式会社</author>
+    <createdate>2020/8</createdate>
+    <dataformat>pdf</dataformat>
+    <scale>不明</scale>
+  </source>
+  <editmethod>Esri ArcGIS Desktop 10.3.1により作成</editmethod>
+  <survey>無</survey>
+</attribute>
